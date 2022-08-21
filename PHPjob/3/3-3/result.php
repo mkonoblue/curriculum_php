@@ -1,9 +1,12 @@
 <?php
 
+echo date("Y/m/d",time())."の運勢は、<br>";
  
 $number = $_POST['inputNumber'];
 $random = mt_rand(1,10);
 $uranai = substr($number,$random,1);
+
+echo "選ばれた数字は$uranai!<br>";
 
 switch ($uranai){
     case "0":
@@ -32,5 +35,3 @@ switch ($uranai){
 
 }
 echo "<br>";
-
-echo date("Y-m-d H:i:s",time());  
