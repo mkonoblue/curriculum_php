@@ -1,0 +1,114 @@
+SQLで大文字・小文字について、ルールや区別方法などを紹介しました。
+SQLを記述する際に、「大文字で書く」「小文字で書く」といったルールはありません。
+しかし、現場や組織によっては書き方が決められているので、しっかり確認しておくと良いでしょう。
+一般的には、予約語やキーワードは大文字で書き、テーブル名やカラム名は小文字で書くことを推奨しています。
+
+
+問１. 苗字が「鈴木」の人を取得してください
+select * from users where name like  "鈴木%";
+問１：SELECT * FROM users WHERE name LIKE "鈴木%";
+
+問２.  年齢が30歳以上の人を取得してください
+select * from users where age >= 30;
+問２：SELECT * FROM users WHERE age>=30;
+
+
+問３.  スコア上位３名を表示してください
+select * from users order by score  desc limit 3;
+問３：SELECT * FROM users ORDER BY score DESC LIMIT 3;
+
+
+
+問４.  スコアに値が入っていない人を確認してください（0点は対象外です） → NULLの人を取得してください
+select * from users where score = "null";
+問４：SELECT * FROM users WHERE score IS NULL;
+
+
+問５. idが1の「田中太郎」の名前を「小林徹也」に変更してください
+update  users set name = "小林徹也" where id=1;
+問５：UPDATE users SET name='小林徹也' WHERE id =1;
+
+
+問６. 自分自身を年齢無しで登録してください
+insert into users (id,name,pass,score) values (11,"河野まゆ美","aaaa",200);
+問６：INSERT INTO users(name,pass,age,score) VALUES('榎本康寿','yasu',NULL,4000);
+
+
+問７. スコアが高い順に、スコアだけを表示してください。ただし、重複があってはいけません
+select distinct score from users order by score desc;
+問７：SELECT DISTINCT score FROM users ORDER BY score DESC;
+
+
+問８. スコアが70以下の人を全て削除してください
+delete from users where score < 70;
+問８：DELETE FROM users WHERE score <=70;
+
+問１：SELECT * FROM users WHERE name LIKE "鈴木%";
+問２：SELECT * FROM users WHERE age>=30;
+問３：SELECT * FROM users ORDER BY score DESC LIMIT 3;
+問４：SELECT * FROM users WHERE score IS NULL;
+問５：UPDATE users SET name='小林徹也' WHERE id =1;
+問６：INSERT INTO users(name,pass,age,score) VALUES('榎本康寿','yasu',NULL,4000);
+問７：SELECT DISTINCT score FROM users ORDER BY score DESC;
+問８：DELETE FROM users WHERE score <=70;
+
+
+
+問１. 年齢の若い順に並べて表示してください
+select * from users order by age;
+
+問２. scoreが高い順に並び替えてください。同じスコアの場合はidが小さい順に並べてください
+select * from users order by score desc, id asc;
+
+問３. SELECT * FROM users ORDER BY score WHERE id > 3; がエラーになりました。どうしてですか？
+ORDER BY は WHERE の後ろに書く
+SELECT * FROM users  WHERE id > 3 order by score;
+
+問４. 年齢の重複を除外して表示してください
+select distinct age  from users;
+
+問５. 年齢が高い順番に並び替えてください。表示する列は名前と年齢だけで、苗字が「鈴木」の人が対象です
+【表示例】
+name	age
+鈴木健二	32
+鈴木雄二	27
+ select name,age from users where name like "鈴木%" order by age desc;
+
+問６. usersテーブルを年齢の若い順に並び替えてください。scoreがNULLの人は除外してください。
+SELECT * FROM users where score != "NULL" order by age;
+
+いろいろな条件指定方法(ORDER BY、DISTINCT) 練習問題
+問１：SELECT * FROM users ORDER BY age ASC;
+問２：SELECT * FROM users ORDER BY age DESC, id ASC;
+問３：WHERE句とORDER　BY句の順番が逆
+問４：SELECT DISTINCT age FROM users;
+問５：SELECT name,age FROM users WHERE name LIKE '鈴木%' ORDER BY age DESC;
+問６：SELECT * FROM users WHERE score IS NOT NULL ORDER BY age ASC;
+
+
+
+問１. scoreが50点以上80点以下ではないデータを取得してください
+SELECT * FROM users WHERE NOT(score >= 50 AND score <= 80);
+
+問２.  idが偶数で、scoreが50点以上80以下のデータを BETWEEN を使って取得してください
+select * from users where (id %2=0 and score  between 50 and 80);
+
+問３.  IN句を使って、idが１か２か３を含むデータを取得してください
+select * from users where id in (1,2,3);
+
+問４.  年齢が26歳以上40歳以下のデータをBETWEENを使わずに取得してください
+select * from users where (26<=age and age<=40);
+
+問５. IN句を使って、年齢が25歳と27歳と30歳と43歳のデータを取得してください
+select * from users where age in (25,27,30,43);
+
+問６. 年齢が25歳ではないデータを取得してください
+ SELECT * FROM users where age != 25;
+
+ いろいろな条件指定方法(IN、NOT、BETWEEN) 練習問題
+問１：SELECT * FROM users WHERE NOT(score >=50 AND score <= 80);
+問２：SELECT * FROM users WHERE score BETWEEN 50 AND 80 AND id % 2=0;
+問３：SELECT * FROM users WHERE id IN(1,2,3);
+問４：SELECT * FROM users WHERE (age >= 26 AND age <= 40);
+問５：SELECT * FROM users WHERE age IN(25,27,30,43);
+問６：SELECT * FROM users WHERE age != 25;
