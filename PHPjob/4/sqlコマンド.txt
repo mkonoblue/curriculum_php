@@ -4,6 +4,8 @@ SQLを記述する際に、「大文字で書く」「小文字で書く」と�
 一般的には、予約語やキーワードは大文字で書き、テーブル名やカラム名は小文字で書くことを推奨しています。
 
 
+
+<<SQLの基本>>
 問１. 苗字が「鈴木」の人を取得してください
 select * from users where name like  "鈴木%";
 問１：SELECT * FROM users WHERE name LIKE "鈴木%";
@@ -16,7 +18,6 @@ select * from users where age >= 30;
 問３.  スコア上位３名を表示してください
 select * from users order by score  desc limit 3;
 問３：SELECT * FROM users ORDER BY score DESC LIMIT 3;
-
 
 
 問４.  スコアに値が入っていない人を確認してください（0点は対象外です） → NULLの人を取得してください
@@ -54,6 +55,7 @@ delete from users where score < 70;
 
 
 
+<<いろいろな条件指定方法（ORDER BY、DISTINCT）>>
 問１. 年齢の若い順に並べて表示してください
 select * from users order by age;
 
@@ -86,6 +88,7 @@ SELECT * FROM users where score != "NULL" order by age;
 問６：SELECT * FROM users WHERE score IS NOT NULL ORDER BY age ASC;
 
 
+<<いろいろな条件指定方法（IN、NOT、BETWEEN）>>
 
 問１. scoreが50点以上80点以下ではないデータを取得してください
 SELECT * FROM users WHERE NOT(score >= 50 AND score <= 80);
@@ -112,3 +115,313 @@ select * from users where age in (25,27,30,43);
 問４：SELECT * FROM users WHERE (age >= 26 AND age <= 40);
 問５：SELECT * FROM users WHERE age IN(25,27,30,43);
 問６：SELECT * FROM users WHERE age != 25;
+
+
+
+
+<<グループ関数>>
+
+問１. usersテーブル全体のscoreの平均を出してください
+SELECT avg(score) FROM users;
+
+
+問２.  classがAだけの平均を出してください
+SELECT class, avg(score) FROM users where class = "a";
+
+
+問３.  クラスをグルーピングしてそれぞれのクラスの合計点を表示してください。表示する列は classとscore（集計済）
+【表示例】
+class	SUM(score)
+A	205
+B	232
+C	143
+D	NULL
+
+select class,sum(score) from users group by class;
+ 
+
+問４.  各クラスの最高得点を表示してください。表示する列は classとscore（集計済）
+【表示例】
+class	MAX(score)
+A	80
+B	100
+C	80
+D	NULL
+ 
+select class,max(score) from users group by class;
+ 
+
+問５. 各クラスの平均点を表示してください。ただし、計算対象は合格点以上のデータだけです（合格点：70）
+select class,avg(score) from users WHERE score >= 70 group by class;
+
+
+問６. 各クラスの平均点を表示して、クラス平均が60点以上のデータだけを表示してください
+select class,avg(score) from users group by class having avg(score)>=60;
+
+
+問７. 各クラスの最低点と最高点を次の表のように表示してください
+・表示する列名も指定のもので表示してください
+・scoreがNULLのデータは表示しないでください
+クラス名	最低点	最高点
+A	50	80
+B	52	100
+C	0	80
+
+select class as クラス名,min(score) as 最低点,max(score) as 最高点 from users group by class where is not NULL;
+
+
+
+<<単一行関数>>
+1問目
+Select  name,upper(name) from employees where id <= 3;
+
+2問目
+select comm,ifnull(comm,0) from employees;
+
+3問目
+select avg(ifnull(comm,0)) from employees;
+
+4問目
+select name,comm,ifnull(comm,””) from employees where length(name) >=7;
+
+5問目
+select prefectures,substr(prefectures,1,3) from employees;
+
+
+<<結合>>
+問１. 左が「usersテーブル」で右が「items」テーブルとしてLEFT JOINで結合してください。結合条件は「item_id 」です。
+（表示例）
+name	item_name	price
+田中	ノート	200
+鈴木	消しゴム	120
+田島	鉛筆	100
+三浦	NULL	NULL
+SELECT name, item_name, price FROM users LEFT JOIN items ON users.item_id = items.item_id;
+
+
+問２.  問1の問題に次の要件を追加してください。
+・「 price 」が150以上のものという条件を付ける
+・「 item_name 」という列名を「 商品名 」という名前で表示する
+SELECT name, item_name as 商品名, price FROM users LEFT JOIN items ON users.item_id = items.item_id where price >=150;
+
+ 
+問３. 「 item_id 」がusersテーブルとitemsテーブルの両方にあるものだけを結合してください。
+（表示例）
+name	item_name	price
+田中	ノート	200
+鈴木	消しゴム	120
+田島	鉛筆	100
+
+SELECT name, item_name, price FROM users JOIN items ON users.item_id = items.item_id;
+
+
+ここから先は次のサンプルデータを使ってください（上で使った従業員のデータと同じです）
+
+DROP DATABASE IF EXISTS sample_db;CREATE DATABASE sample_db CHARACTER SET utf8;USE sample_db;
+CREATE TABLE emp (empno int(5), ename varchar(16), mgr int(5), deptno int (3));
+INSERT INTO emp (empno, ename, mgr, deptno) VALUES (1000, '田中', 1001, 10),(1002, '鈴木', 1001, 10),(1003, '田島', 1005, 20),(1004, '加藤', 1005, 20),(1005, '遠藤', 1001, 30),(1006, '佐藤', 1001, 40),(1007, '福田', 1006, 40),(1008, '小林', 1006, 50);INSERT INTO emp (empno, ename, deptno) VALUES (1009, '高橋', 10);INSERT INTO emp (empno, ename, deptno) VALUES (1001, '小嶋', 10);
+CREATE TABLE dept (deptno int(3), dname varchar(10), mgr int(5));INSERT INTO dept (deptno, dname, mgr) VALUES (10, '営業', 1001),(20, '経理', 1004),(30, '人事', 1005),(40, '開発', 1006);
+show tables;
+【 empテーブル 】
+empno	ename	mgr	deptno
+1000	田中	1001	10
+1002	鈴木	1001	10
+1003	田島	1005	20
+1004	加藤	1005	20
+1005	遠藤	1001	30
+1006	佐藤	1001	40
+1007	小林	1001	50
+1008	福田	1006	40
+1009	高橋	NULL	10
+1001	小嶋	NULL	10
+ 
+
+【 deptテーブル 】
+
+deptno	dname	mgr
+10	営業	1001
+20	経理	1004
+30	人事	1005
+40	開発	1006
+ 
+
+問4. この二つのテーブルを内部結合で次のように書いたら、「小林さん」が表示されませんでした。その理由はなんですか？
+SELECT empno, ename, dept.dname FROM emp INNER JOIN dept ON emp.deptno = dept.deptno;
+
+小林さんのdeptnoがdeptテーブルに存在しないため
+ 
+
+問5.deptnoを結合条件にして、deptnoがどちらかの表になかった場合、そのデータはNULLで表示するSQLを２通り書いてください。
+結果はどちらも次のようになります。
+empno	ename	dname
+1000	田中	営業
+1002	鈴木	営業
+1009	高橋	営業
+1001	小嶋	営業
+1003	田島	経理
+1004	加藤	経理
+1005	遠藤	人事
+1006	佐藤	開発
+1007	福田	開発
+1008	小林	NULL
+
+SELECT empno, ename, dname FROM emp LEFT JOIN dept ON emp.deptno = dept.deptno;
+SELECT empno, ename, dname FROM dept RIGHT JOIN emp ON emp.deptno = dept.deptno;
+
+
+
+
+
+
+<<トランザクション>>
+問１. トランザクションを考慮して、給料（sal）が450,000以上のデータの歩合（comm）を0に更新してください。
+一度UPDATEで更新したら、ロールバックを実行してデータが元に戻っていることをSELECT文で確認。
+再度UPDATEを実行して、コミットで処理を確定してください。
+BEGIN;
+update employees set comm = 0 where sal >= 450000;
+SELECT * FROM employees;
+rollback;
+SELECT * FROM employees;
+update employees set comm = 0 where sal >= 450000;
+commit;
+ 
+ > START TRANSACTION;(又は　BEGIN;)
+---------
+> UPDATE employees SET comm = 0 WHERE sal IN (SELECT sal FROM(SELECT * FROM employees WHERE sal >= 450000) AS emp);
+---------
+> SELECT * FROM employees;  //対象カラムが更新されているか確認
+---------
+> ROLLBACK;
+---------
+> SELECT * FROM employees;  //戻っているか確認
+---------
+> UPDATE employees SET comm = 0 WHERE sal IN (SELECT sal FROM(SELECT * FROM employees WHERE sal >= 450000) AS emp);
+---------
+> COMMIT;
+
+
+問２.  次の3つのUPDATE処理を行います。それぞれの更新処理の前にSAVEPOINTを置いて、3つ目のUPDATE後にロールバックで2番目の状態に戻ってください。
+prefecturesを全て「Tokyo」に変更
+deptnoが10の人の給料（sal）を200000に変更
+deptnoが30の人の歩合（comm）を0に変更
+最終的に以下の形になっていたら成功です。
+
+id	name	sal	comm	deptno	prefectures	gender
+1	tanaka	200000	100000	10	Tokyo	女
+2	suzuki	250000	50000	10	Tokyo	男
+3	suzuki	300000	140000	10	Tokyo	女
+4	itou	350000	200000	20	Tokyo	男
+5	katou	400000	150000	20	Tokyo	女
+6	suzuki	450000	80000	20	Tokyo	男
+7	satou	500000	500000	30	Tokyo	男
+8	kobayashi	1000000	250000	30	Tokyo	女
+9	hukuda	1500000	50000	30	Tokyo	男
+10	shibata	480000	NULL	20	Tokyo	男
+
+begin;
+savepoint save1;
+update employees set prefectures = 'Tokyo' ;
+SELECT * FROM employees;
+savepoint save2;
+update employees set sal = 200000 where deptno = 10;
+SELECT * FROM employees;
+savepoint save3;
+update employees set comm = 0 where deptno = 30;
+rollback to save2;
+commit;
+
+> BEGIN;
+> SAVEPOINT save1;
+> UPDATE employees SET prefectures = "Tokyo";
+> SELECT * FROM employees;
+
+> SAVEPOINT save2;
+> UPDATE employees SET sal = 200000 WHERE deptno = 10;
+> SELECT * FROM employees;
+
+> SAVEPOINT save3;
+> UPDATE employees SET comm = 0 WHERE deptno = 30;
+> SELECT * FROM employees;
+
+> ROLLBACK TO save2;
+> COMMIT;
+> SELECT * FROM employees;   //正しく更新されているか確認
+
+「ROLLBACK TO save2;」でsave2のセーブポイントに飛ぶので、クエリ「UPDATE employees SET sal = 200000 WHERE deptno = 10;」を実行前
+
+
+
+
+<<SQL課題　ブログ用のデータベースを作成しよう>>
+データベース
+    YIGroupBlog
+テーブル
+    posts
+    comments
+    users
+
+CREATE TABLE posts (
+      id INT NOT NULL AUTO_INCREMENT,
+      title VARCHAR(50),
+      content VARCHAR(255),
+      time TIMESTAMP,
+      PRIMARY KEY (id)
+    )DEFAULT CHARSET=utf8;
+
+
+DROP DATABASE IF EXISTS YIGroupBlog;
+CREATE DATABASE YIGroupBlog CHARACTER SET utf8;USE YIGroupBlog;
+CREATE TABLE posts (
+    id INT NOT NULL AUTO_INCREMENT,
+    title VARCHAR(50),
+    content VARCHAR(255),
+    time TIMESTAMP,
+    PRIMARY KEY (id)
+    )DEFAULT CHARSET=utf8;
+
+CREATE TABLE comments (
+    id INT NOT NULL AUTO_INCREMENT,
+    post_id INT,
+    name VARCHAR(20),
+    content VARCHAR(255),
+    time TIMESTAMP,
+    PRIMARY KEY (id)
+    )DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE users (
+    id INT NOT NULL AUTO_INCREMENT,
+    post_id INT,
+    name VARCHAR(50),
+    password VARCHAR(255),
+    time TIMESTAMP,
+    PRIMARY KEY (id)
+    )DEFAULT CHARSET=utf8;
+
+
+
+CREATE TABLE users (
+    id int AUTO_INCREMENT PRIMARY KEY,
+    name varchar(16),
+    sal int(8),
+    comm int(8),
+    deptno int (3),
+    prefectures varchar(10),
+    gender varchar(5));
+INSERT INTO employees (name,sal,comm,deptno,prefectures,gender)
+    VALUES 
+        ('tanaka',200000,100000,10,'Hokkaido','女'),
+        ('suzuki',250000,50000,10,'Aichi','男'),
+        ('suzuki',300000,140000,10,'Osaka','女'),
+        ('itou', 350000,200000,20,'Aomori','男'),
+        ('katou', 400000,150000, 20, 'Hukushima', '女'),
+        ('suzuki', 450000, 80000, 20, 'Okinawa', '男'),
+        ('satou', 500000, 500000, 30, 'Chiba', '男'),
+        ('kobayashi', 1000000, 250000, 30, 'Ishikawa', '女'),
+        ('hukuda', 1500000, 50000, 30, 'Aichi', '男');
+        
+INSERT INTO employees (name, sal, comm, deptno, prefectures, gender)
+     VALUES ('shibata', 480000, NULL, 20, 'Aichi', '男');
+
+
+SELECT * FROM employees;
