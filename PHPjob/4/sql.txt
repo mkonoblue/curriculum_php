@@ -1,6 +1,0 @@
-
-SELECT avg(score) FROM users;
-
-
-SELECT class, avg(score) FROM users where class = "a" group by class;
-
