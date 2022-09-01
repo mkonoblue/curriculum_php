@@ -36,7 +36,6 @@ $ans_sql = $sql[1];
     <?php } ?>
     <input type="hidden" name="ans_port"
         value="<?php echo $ans_port ?>" />
-    <?php echo $ans_port ?>
 
 
 <h2>②Webページを作成するための言語は？</h2>
