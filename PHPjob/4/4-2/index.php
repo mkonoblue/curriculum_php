@@ -20,7 +20,7 @@
             </div>
             <div class="container2">
                 <div class="user">
-                    ようこそ:
+                    ようこそ
                     <?php 
                         $data = new getData();
                         $getuserdata = $data->getUserData();
