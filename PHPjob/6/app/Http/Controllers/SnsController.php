@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Sns;
+use App\Posts;
 
 class SnsController extends Controller
 {
@@ -14,16 +14,33 @@ class SnsController extends Controller
         return view('home');
     }
 /**
-*
+*つぶやきを投稿する
 **/
-  public function create()
+  public function create(Request $request)
   {
-    // $sns = new Sns;
-    // $form = $request->all();
-    // DDD($form);
+    $posts = new posts;
+    $form = $request->all();
+    $id = auth()->id();
 
-    // $sns->fill($form);
-    // $sns->save();
+    $posts->fill($form);
+    $posts->user_id=$id;
+    $posts->save();
+
+    return redirect('/home');
   }
 
+
+/**
+ *つぶやき一覧を表示する 
+**/
+  public function index()
+  {
+      //すべてのPostsを取得する
+      $posts = Posts::all();
+      
+      return view('home', 
+      [
+        'posts' => $posts,
+      ]);
+  }
 }
