@@ -5,7 +5,7 @@ define('DB_DATABASE','bookstock');
 //MySQLのユーザー名
 define('DB_USERNAME','root');
 //MySQLのログインパスワード
-define('DB_PASSWORD','root');
+define('DB_PASSWORD','');
 //DSN
 define('PDO_DSN','mysql:host=localhost;charset=utf8;dbname='.DB_DATABASE);
 
