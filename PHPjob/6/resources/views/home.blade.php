@@ -31,10 +31,12 @@
         <tbody>
         @foreach($posts as $post)
         <tr>
-            <th>{{ $post->id }}</th>
-            <td>{{ str_limit($post->user_id, 100) }}</td>
-            <td>{{ str_limit($post->body, 300) }}</td>
-            <td>{{ str_limit($post->created_at, 100) }}</td>
+            {{-- <th>{{ $post->id }}</th> --}}
+            {{-- <td>{{ $post->user_id }}</td> --}}
+            {{-- <td>{{ $post->user_id->getName() }}</td> --}}
+            <td>{{ $post->user->name }}</td>
+            <td>{{ $post->body }}</td>
+            <td>{{ $post->created_at }}</td>
         </tr>
         @endforeach
         </tbody>

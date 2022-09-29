@@ -1,5 +1,7 @@
 <?php
 
+// use App\Post;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -10,6 +12,14 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+
+
+// Route::get('/{id}/address', function($id){
+//     $post=Post::find($id);
+//     return "アドレス番号".$id."のユーザーの名前は".$post->user->name."さんです。";
+// });
+
 
 Route::get('/', function () {
     return view('welcome');

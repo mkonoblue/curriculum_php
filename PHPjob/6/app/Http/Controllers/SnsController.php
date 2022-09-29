@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Posts;
+use App\Post;
+// use App\User;
 
 class SnsController extends Controller
 {
@@ -18,13 +19,13 @@ class SnsController extends Controller
 **/
   public function create(Request $request)
   {
-    $posts = new posts;
+    $post = new post;
     $form = $request->all();
     $id = auth()->id();
 
-    $posts->fill($form);
-    $posts->user_id=$id;
-    $posts->save();
+    $post->fill($form);
+    $post->user_id=$id;
+    $post->save();
 
     return redirect('/home');
   }
@@ -35,12 +36,17 @@ class SnsController extends Controller
 **/
   public function index()
   {
-      //すべてのPostsを取得する
-      $posts = Posts::all();
+      //すべてのPostsテーブルを降順で取得する
+      $posts = Post::all()->sortByDesc("created_at");
+      // $users = User::all();
       
       return view('home', 
       [
         'posts' => $posts,
+        // 'users' => $users,
       ]);
   }
+
+
+
 }
