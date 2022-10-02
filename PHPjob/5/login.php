@@ -48,7 +48,7 @@ if (!empty($_POST["name"]) && !empty($_POST["password"])) {
                $_SESSION["user_id"] = $row["id"];
                $_SESSION["user_name"] = $row["name"];
             //main.phpにリダイレクト
-            header("Location:main.php");
+            header("Location: main.php");
             exit;
         } else {
             //パスワードが違っていた時の処理
@@ -95,7 +95,7 @@ if (!empty($_POST["name"]) && !empty($_POST["password"])) {
                 </div>
                 <form method="post" action="">
                     <input type="text" class="form-control mt-3" name="name" id="name" placeholder="ユーザー名">
-                    <input type="test" class="form-control mt-3" name="password" id="password" placeholder="パスワード">
+                    <input type="password" class="form-control mt-3" name="password" id="password" placeholder="パスワード">
                     <div class=" col-5 ">
                         <input type="submit" class="btn btn-primary mt-3 w-100" value="ログイン">
                     </div>

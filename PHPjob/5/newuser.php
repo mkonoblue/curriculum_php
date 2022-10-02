@@ -32,7 +32,7 @@ if (isset($_POST["newuser"])) {
             //　登録完了メッセージ出力
             echo "登録完了しました";
 
-            header("Location:main.php");
+            header("Location: main.php");
             
         // エラーメッセージの出力 FILL_IN 
         }catch(PDOException $e){
