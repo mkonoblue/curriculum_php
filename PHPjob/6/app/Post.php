@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
@@ -19,4 +20,7 @@ class Post extends Model
     public static $rules = array(
         'body' => 'required|string|max:255',
     );
+
+    //論理削除
+    use SoftDeletes;
 }
