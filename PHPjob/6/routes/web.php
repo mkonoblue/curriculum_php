@@ -29,10 +29,10 @@ Route::get('/', function () {
 Auth::routes();
 
 
-Route::get('/home', 'SnsController@add')->middleware('auth');
+Route::get('home', 'SnsController@add')->middleware('auth');
 
-Route::post('/home', 'SnsController@create')->middleware('auth');
+Route::post('home', 'SnsController@create')->middleware('auth');
 
-Route::get('/home', 'SnsController@index')->middleware('auth');
+Route::get('home', 'SnsController@index')->middleware('auth');
 
-// Route::get('/home', 'HomeController@index')->name('home');
+Route::get('home/delete', 'SnsController@delete')->middleware('auth');
