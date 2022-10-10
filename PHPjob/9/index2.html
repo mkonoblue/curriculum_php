@@ -26,13 +26,13 @@
 
         $('button').on('click', function() {
             if(state=='close'){
-                $('.left').animate({width: '0%'},2000);
-                $('.right').animate({width: '0%'},2000);
+                $('.left').animate({width: '0%'},1000);
+                $('.right').animate({width: '0%'},1000);
                 state = 'open';
                 console.log(state);
             }else if(state=='open'){
-                $('.left').animate({width: '100%'},2000);
-                $('.right').animate({width: '100%'},2000);
+                $('.left').animate({width: '50%'},1000);
+                $('.right').animate({width: '50%'},1000);
                 state = 'close';
                 console.log(state);
             }
